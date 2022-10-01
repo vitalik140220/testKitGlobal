@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Header from "../components/header"
 import AllExchangeRates from "../pages/allExchangeRates"
 import Main from "../pages/main"
+import useAppNavigation from "./appNavigation.hook"
 const AppNavigation: FC = () => {
+	useAppNavigation()
 	return (
 		<Router>
 			<Header />
