@@ -9,7 +9,7 @@ const Main: FC = () => {
 		handleCurrentCurrencyChange,
 		handleCurrentConvertToCurrencyChange,
 		currencies,
-		currentCurrency,
+		defaultExchange,
 		result,
 		currentConvertToCurrency,
 		money
@@ -31,7 +31,7 @@ const Main: FC = () => {
 						name='Валюта'
 						id='currency'
 						onChange={handleCurrentCurrencyChange}
-						value={currentCurrency}>
+						value={defaultExchange.cc}>
 						{currencies.map((currency) => (
 							<option key={currency} value={currency} label={currency} />
 						))}

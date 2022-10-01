@@ -1,23 +1,22 @@
 import { ChangeEvent, FormEvent, useState, useEffect } from "react"
-import { useAppSelector } from "../../hooks/redux"
+import { useAppSelector, useAppDispatch } from "../../hooks/redux"
+import { changeDefaultExchange } from "../../redux/slices/exhangesSlice"
 
 const useMain = () => {
 	const [money, setMoney] = useState<string>("")
-	const [currentCurrency, setCurrentCurrency] = useState<string>("")
 	const [currentConvertToCurrency, setCurrentConvertToCurrency] =
 		useState<string>("")
 	const [result, setResult] = useState<string>("")
-	const { exchanges } = useAppSelector((state) => state.exchanges)
+	const { exchanges, defaultExchange } = useAppSelector(
+		(state) => state.exchanges
+	)
+	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		setCurrentCurrency(exchanges[0]?.cc)
 		setCurrentConvertToCurrency(exchanges[1]?.cc)
 	}, [exchanges])
 
 	const currencies = exchanges.map((exchange) => exchange.cc)
-	const currentRate = exchanges.find(
-		(exchange) => exchange.cc === currentCurrency
-	)
 	const convertRate = exchanges.find(
 		(exchange) => exchange.cc === currentConvertToCurrency
 	)
@@ -27,7 +26,11 @@ const useMain = () => {
 	const handleCurrentCurrencyChange = (
 		event: ChangeEvent<HTMLSelectElement>
 	) => {
-		setCurrentCurrency(event.target.value)
+		dispatch(
+			changeDefaultExchange(
+				exchanges.find((exchange) => exchange.cc === event.target.value)!
+			)
+		)
 	}
 
 	const handleCurrentConvertToCurrencyChange = (
@@ -39,16 +42,12 @@ const useMain = () => {
 	const handleSubmitClick = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		if (money) {
-			if (currentCurrency !== "UAH") {
-				setResult(
-					(
-						(parseFloat(money) * currentRate?.rate!) /
-						convertRate?.rate!
-					).toString()
-				)
-			} else {
-				setResult((parseFloat(money) * convertRate?.rate!).toString())
-			}
+			setResult(
+				(
+					(parseFloat(money) * defaultExchange?.rate!) /
+					convertRate?.rate!
+				).toString()
+			)
 		}
 	}
 
@@ -58,7 +57,7 @@ const useMain = () => {
 		handleCurrentCurrencyChange,
 		handleCurrentConvertToCurrencyChange,
 		currencies,
-		currentCurrency,
+		defaultExchange,
 		result,
 		currentConvertToCurrency,
 		money
